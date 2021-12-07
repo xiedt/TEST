@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laoxie.mapper.FileMapper">
+
+    <select id="queryFilesByOwner" resultType="Files">
+        select * from files where owner = #{owner}
+    </select>
+
+    <select id="queryPublicFiles" resultType="Files">
+        select * from files where isprivate=1
+    </select>
+    <select id="queryFileById" resultType="Files">
+        select * from files where id=#{id}
+    </select>
+
+<!--    <if test="username != null">-->
+<!--        and username like '%${username}%'-->
+<!--    </if>-->
+
+    <select id="queryFileByTitle" resultType="Files">
+        select * from files where filename like '%${filename}%' and isprivate=1
+        union
+        select * from files where filename like '%${filename}%' and isprivate=0 and owner=#{currentUser}
+    </select>
+
+    <select id="queryFileByContent" resultType="Files">
+        select * from files where filecontent like '%${filecontent}%' and isprivate=1
+        union
+        select * from files where filecontent like '%${filecontent}%' and isprivate=0 and owner=#{currentUser}
+    </select>
+
+    <select id="queryFileByOwner01" resultType="Files">
+        select * from files where owner=#{owner0} and isprivate=1
+        union
+        select * from files where owner=#{owner0} and isprivate=0 and owner=#{owner1}
+    </select>
+
+    <!--匹配度排序-->
+    <select id="queryAll" resultType="Files">
+        select * from files where filename like '%${keys}%' and isprivate=1
+        union
+        select * from files where filename like '%${keys}%' and isprivate=0 and owner=#{owner}
+        union
+        select * from files where filecontent like '%${keys}%' and isprivate=1
+        union
+        select * from files where filecontent like '%${keys}%' and isprivate=0 and owner=#{owner}
+        order by(
+        case
+            when filename= #{keys} then 1
+            when filename like '${keys}%' then 2
+            when filename like '%${keys}%' then 3
+            when filename like '%${keys}' then 4
+
+            when filecontent = #{keys} then 5
+            when filecontent like '${keys}%' then 6
+            when filecontent like '%${keys}%' then 7
+            when filecontent like '%${keys}' then 8
+        end
+        )
+    </select>
+
+
+    <select id="queryFiles" resultType="Files">
+        select * from files
+    </select>
+
+    <delete id="deleteFile" parameterType="int">
+        delete from files where id=#{id}
+    </delete>
+    <update id="updateFile" parameterType="Files">
+        update files set filename=#{filename},filecontent=#{filecontent},owner=#{owner},isprivate=#{isprivate},createtime=#{createtime}
+        where id=#{id}
+    </update>
+
+    <insert id="addFile" parameterType="Files">
+        insert into files values (#{id},#{filename},#{filecontent},#{owner},#{isprivate},#{createtime})
+    </insert>
+<!--    <select id="queryScoreById" resultType="Score">-->
+<!--        select *from score where id = #{id}-->
+<!--    </select>-->
+
+<!--    <select id="queryScoreBylastName" resultType="Score">-->
+<!--        select *from score where lastName = #{lastName}-->
+<!--    </select>-->
+
+<!--    <select id="queryScoreByGender" resultType="Score">-->
+<!--        select *from score where gender = #{gender}-->
+<!--    </select>-->
+
+
+
+<!--    <update id="updateScore" parameterType="Score">-->
+<!--        update score set lastName=#{lastName},score=#{score} ,gender=#{gender},grade=#{grade},birth=#{birth} where id =-->
+<!--        #{id}-->
+<!--    </update>-->
+
+
+</mapper>

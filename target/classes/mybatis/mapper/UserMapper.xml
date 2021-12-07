@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.laoxie.mapper.UserMapper">
+
+    <select id="findUserByUserName" resultType="User">
+        select *from user where username = #{username}
+    </select>
+
+    <select id="findUserById" resultType="User">
+        select *from user where id=#{id}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+         insert into user (username,password) values (#{username},#{password})
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update user set username=#{username},password=#{password},sex=#{sex}
+        where id=#{id}
+    </update>
+
+</mapper>
